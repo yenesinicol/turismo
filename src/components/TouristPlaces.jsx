@@ -1,87 +1,206 @@
 import React from 'react';
-import { MapPin, Info, ArrowRight, Eye, Calendar, Mountain } from 'lucide-react';
+import { 
+  MapPin, 
+  ArrowRight, 
+  Heart, 
+  Sparkles, 
+  Clock, 
+  Mountain, 
+  Compass, 
+  Activity, 
+  Shirt, 
+  Calendar 
+} from 'lucide-react';
 
-export default function TouristPlaces({ places, onSelectPlace }) {
+export default function TouristPlaces({ places, onSelectPlace, favorites = [], onToggleFavorite }) {
   return (
-    <section id="turismo" className="py-24 bg-stone-950 text-white relative">
-      {/* Decorative background glow */}
-      <div className="absolute top-1/4 left-0 w-96 h-96 bg-emerald-900/15 rounded-full blur-3xl pointer-events-none" />
-      <div className="absolute bottom-1/4 right-0 w-96 h-96 bg-amber-900/15 rounded-full blur-3xl pointer-events-none" />
-
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
-        
-        {/* Section Header */}
-        <div className="text-center max-w-3xl mx-auto mb-16">
-          <div className="inline-flex items-center space-x-2 px-3.5 py-1.5 rounded-full bg-emerald-950/80 border border-emerald-600/40 text-emerald-400 text-xs font-semibold tracking-wider uppercase mb-4">
-            <Mountain className="w-3.5 h-3.5" />
-            <span>Destinos Imperdibles</span>
+    <section id="turismo" className="py-24 max-w-7xl mx-auto px-4 sm:px-8">
+      
+      {/* Section Header (Stitch Node 09d0abdea90942908bb983ef73a40909) */}
+      <div className="flex flex-col md:flex-row md:items-end justify-between mb-12">
+        <div className="flex flex-col gap-1">
+          <div className="flex items-center gap-2">
+            <Compass className="w-5 h-5 text-secondary" />
+            <span className="font-label-sm text-xs text-secondary tracking-widest uppercase font-bold">
+              Guía de Destinos
+            </span>
           </div>
-          <h2 className="text-3xl sm:text-5xl font-serif font-black text-white tracking-tight mb-4">
-            Lugares <span className="text-transparent bg-clip-text bg-gradient-to-r from-emerald-400 to-amber-400">Turísticos</span> de Cochabamba
+          <h2 className="font-headline-lg text-3xl sm:text-5xl font-semibold text-primary dark:text-white">
+            Destinos Inolvidables
           </h2>
-          <p className="text-stone-300 text-base sm:text-lg">
-            Descubre paisajes imponentes, monumentos emblemáticos, fortalezas arqueológicas y la historia viva de los valles interandinos.
+        </div>
+        <p className="font-body-sm text-on-surface-variant dark:text-stone-400 text-sm max-w-md mt-4 md:mt-0 leading-relaxed">
+          Maravillas geográficas, palacios neoclásicos y fortalezas arqueológicas de los valles interandinos y la cordillera.
+        </p>
+      </div>
+
+      {/* Cards Grid */}
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+        {places.map((place) => {
+          const isFav = favorites.some((f) => f.id === place.id);
+          return (
+            <article 
+              key={place.id}
+              className="flex flex-col bg-surface-container-lowest dark:bg-stone-900 rounded-3xl overflow-hidden shadow-[0_4px_20px_-2px_rgba(31,41,35,0.06),0_2px_6px_-1px_rgba(184,90,50,0.04)] border border-outline-variant/30 hover:shadow-xl hover:-translate-y-1 transition-all duration-300"
+            >
+              {/* Media with Stitch overlays */}
+              <div className="relative w-full aspect-[4/3] overflow-hidden bg-surface-container-high group">
+                <img 
+                  src={place.image} 
+                  alt={place.name} 
+                  loading="lazy"
+                  onError={(e) => {
+                    e.target.onerror = null;
+                    e.target.src = place.fallbackImage || 'https://images.unsplash.com/photo-1464822759023-fed622ff2c3b?auto=format&fit=crop&w=1200&q=80';
+                  }}
+                  class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500 ease-out" 
+                />
+                <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-black/20" />
+                
+                {/* Top Badge */}
+                <div className="absolute top-4 left-4">
+                  <span className="inline-flex items-center gap-1 px-3 py-1 rounded-full font-label-sm text-xs bg-primary text-on-primary shadow-sm backdrop-blur-md">
+                    <Sparkles className="w-3.5 h-3.5 text-tertiary-fixed fill-tertiary-fixed" />
+                    <span>{place.category.split('&')[0]}</span>
+                  </span>
+                </div>
+
+                {/* Wishlist Heart Button */}
+                <button 
+                  onClick={() => onToggleFavorite && onToggleFavorite(place)}
+                  className={`absolute top-4 right-4 w-9 h-9 rounded-full bg-white/90 dark:bg-stone-900/90 backdrop-blur-md flex items-center justify-center transition-colors shadow-sm ${
+                    isFav ? 'text-secondary' : 'text-stone-400 hover:text-secondary'
+                  }`}
+                  title={isFav ? 'Quitar de favoritos' : 'Guardar en favoritos'}
+                >
+                  <Heart className={`w-4 h-4 ${isFav ? 'fill-secondary' : ''}`} />
+                </button>
+
+                {/* Bottom Badges: Altitude & Duration */}
+                <div className="absolute bottom-4 left-4 right-4 flex items-center justify-between text-on-primary text-xs font-semibold">
+                  <span className="flex items-center gap-1.5 bg-black/45 px-2.5 py-1 rounded-xl backdrop-blur-sm">
+                    <Mountain className="w-3.5 h-3.5 text-tertiary-fixed" />
+                    <span>{place.altitude || '2,570 msnm'}</span>
+                  </span>
+                  <span className="flex items-center gap-1.5 bg-black/45 px-2.5 py-1 rounded-xl backdrop-blur-sm">
+                    <Clock className="w-3.5 h-3.5 text-secondary-container" />
+                    <span>{place.duration || '2 a 3 hrs'}</span>
+                  </span>
+                </div>
+              </div>
+
+              {/* Card Body */}
+              <div className="p-6 flex flex-col gap-3 justify-between flex-1">
+                <div>
+                  <div className="flex items-center gap-1 text-secondary font-label-md text-xs font-semibold">
+                    <MapPin className="w-4 h-4 shrink-0" />
+                    <span className="truncate">{place.location}</span>
+                  </div>
+
+                  <h3 className="font-headline-sm text-xl font-bold text-primary dark:text-white mt-1">
+                    {place.name}
+                  </h3>
+
+                  <p className="font-body-sm text-sm text-on-surface-variant dark:text-stone-300 line-clamp-3 mt-2 leading-relaxed">
+                    {place.shortDescription}
+                  </p>
+
+                  {/* Highlights Tags */}
+                  {place.highlights && (
+                    <div className="flex flex-wrap gap-1.5 pt-3">
+                      {place.highlights.slice(0, 3).map((hl, i) => (
+                        <span 
+                          key={i} 
+                          className="px-2.5 py-0.5 rounded-lg bg-surface-container dark:bg-stone-800 text-on-surface-variant dark:text-stone-300 font-label-sm text-[11px]"
+                        >
+                          {hl}
+                        </span>
+                      ))}
+                    </div>
+                  )}
+                </div>
+
+                {/* Action CTA */}
+                <div className="pt-4 border-t border-outline-variant/30">
+                  <button 
+                    onClick={() => onSelectPlace(place)}
+                    className="w-full py-2.5 px-4 rounded-xl bg-primary text-on-primary hover:bg-primary-container font-label-md text-xs font-semibold transition-all flex items-center justify-center gap-1.5 shadow-sm"
+                  >
+                    <span>Conocer más</span>
+                    <ArrowRight className="w-4 h-4" />
+                  </button>
+                </div>
+              </div>
+            </article>
+          );
+        })}
+      </div>
+
+      {/* Manual del Explorador: Tips para tu Viaje en Bolivia (Exact Stitch Turismo Section 2) */}
+      <div className="mt-20 flex flex-col gap-6">
+        <div className="flex flex-col gap-1">
+          <div className="flex items-center gap-2">
+            <Sparkles className="w-5 h-5 text-secondary" />
+            <span className="font-label-sm text-xs text-secondary tracking-widest uppercase font-bold">
+              Manual del Explorador
+            </span>
+          </div>
+          <h3 className="font-headline-md text-2xl sm:text-3xl text-primary dark:text-white font-semibold">
+            Tips para tu Viaje en Bolivia
+          </h3>
+          <p className="font-body-sm text-on-surface-variant dark:text-stone-400 text-sm">
+            Recomendaciones indispensables para disfrutar cada piso ecológico al máximo.
           </p>
         </div>
 
-        {/* Places Grid */}
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-          {places.map((place) => (
-            <div
-              key={place.id}
-              className="group bg-stone-900/80 rounded-3xl overflow-hidden border border-stone-800/80 hover:border-amber-600/50 shadow-xl hover:shadow-2xl hover:shadow-black/50 transition-all duration-300 flex flex-col justify-between hover:-translate-y-1.5"
-            >
-              <div>
-                {/* Image container with badge */}
-                <div className="relative h-64 overflow-hidden">
-                  <img
-                    src={place.image}
-                    alt={place.name}
-                    className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-700 ease-out"
-                    loading="lazy"
-                  />
-                  <div className="absolute inset-0 bg-gradient-to-t from-stone-950 via-stone-950/20 to-transparent opacity-80 group-hover:opacity-60 transition-opacity" />
-                  
-                  {/* Category Pill */}
-                  <span className="absolute top-4 left-4 bg-stone-950/80 backdrop-blur-md text-amber-400 text-xs font-semibold px-3 py-1.5 rounded-full border border-amber-500/30 shadow-md">
-                    {place.category}
-                  </span>
-
-                  {/* Location badge */}
-                  <div className="absolute bottom-3 left-4 right-4 flex items-center text-xs text-stone-200">
-                    <MapPin className="w-3.5 h-3.5 text-amber-400 mr-1.5 shrink-0" />
-                    <span className="truncate font-medium">{place.location}</span>
-                  </div>
-                </div>
-
-                {/* Content */}
-                <div className="p-6">
-                  <h3 className="text-xl sm:text-2xl font-serif font-bold text-white mb-2.5 group-hover:text-amber-400 transition-colors">
-                    {place.name}
-                  </h3>
-                  <p className="text-stone-300 text-sm leading-relaxed line-clamp-3">
-                    {place.shortDescription}
-                  </p>
-                </div>
-              </div>
-
-              {/* Card Footer with CTA */}
-              <div className="px-6 pb-6 pt-2">
-                <button
-                  onClick={() => onSelectPlace(place)}
-                  className="w-full py-3 px-4 rounded-2xl bg-stone-800/90 hover:bg-gradient-to-r hover:from-emerald-700 hover:to-amber-700 text-stone-200 hover:text-white font-semibold text-sm transition-all flex items-center justify-center space-x-2 border border-stone-700/60 group-hover:border-transparent shadow-md"
-                >
-                  <Eye className="w-4 h-4 text-amber-400 group-hover:text-white transition-colors" />
-                  <span>Conocer más</span>
-                  <ArrowRight className="w-4 h-4 opacity-70 group-hover:translate-x-1 transition-transform" />
-                </button>
-              </div>
-
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+          {/* Tip 1 */}
+          <div className="bg-surface-container dark:bg-stone-900 rounded-3xl p-6 flex gap-4 items-start shadow-sm border border-outline-variant/30">
+            <div className="w-12 h-12 rounded-2xl bg-surface-container-lowest dark:bg-stone-800 text-primary dark:text-primary-fixed flex items-center justify-center shrink-0 shadow-sm">
+              <Activity className="w-6 h-6" />
             </div>
-          ))}
-        </div>
+            <div className="flex flex-col gap-1 min-w-0">
+              <h4 className="font-headline-sm text-[1.05rem] text-primary dark:text-white font-semibold">
+                Aclimatación y Soroche
+              </h4>
+              <p className="font-body-sm text-xs sm:text-sm text-on-surface-variant dark:text-stone-300 leading-relaxed">
+                Inicia tu itinerario en <strong className="text-primary dark:text-primary-fixed font-semibold">Cochabamba (2,570 msnm)</strong> para una adaptación suave antes de subir al Altiplano o cumbres nevadas. Bebe mate de coca e hidrátate.
+              </p>
+            </div>
+          </div>
 
+          {/* Tip 2 */}
+          <div className="bg-surface-container dark:bg-stone-900 rounded-3xl p-6 flex gap-4 items-start shadow-sm border border-outline-variant/30">
+            <div className="w-12 h-12 rounded-2xl bg-surface-container-lowest dark:bg-stone-800 text-secondary dark:text-secondary-fixed flex items-center justify-center shrink-0 shadow-sm">
+              <Shirt className="w-6 h-6" />
+            </div>
+            <div className="flex flex-col gap-1 min-w-0">
+              <h4 className="font-headline-sm text-[1.05rem] text-primary dark:text-white font-semibold">
+                Valles vs. Altiplano
+              </h4>
+              <p className="font-body-sm text-xs sm:text-sm text-on-surface-variant dark:text-stone-300 leading-relaxed">
+                Cochabamba goza de primavera perenne (ropa ligera de día y abrigo suave nocturno). Para el Tunari, empaca cortavientos, gafas UV y calzado con tracción de montaña.
+              </p>
+            </div>
+          </div>
+
+          {/* Tip 3 */}
+          <div className="bg-surface-container dark:bg-stone-900 rounded-3xl p-6 flex gap-4 items-start shadow-sm border border-outline-variant/30">
+            <div className="w-12 h-12 rounded-2xl bg-surface-container-lowest dark:bg-stone-800 text-tertiary-fixed-dim dark:text-tertiary-fixed flex items-center justify-center shrink-0 shadow-sm">
+              <Calendar className="w-6 h-6" />
+            </div>
+            <div className="flex flex-col gap-1 min-w-0">
+              <h4 className="font-headline-sm text-[1.05rem] text-primary dark:text-white font-semibold">
+                Mejor Época de Viaje
+              </h4>
+              <p className="font-body-sm text-xs sm:text-sm text-on-surface-variant dark:text-stone-300 leading-relaxed">
+                <strong className="text-primary dark:text-primary-fixed font-semibold">Mayo a Octubre:</strong> temporada seca ideal para trekking andino. El valle de Cochabamba ofrece clima templado y festividades durante todo el año.
+              </p>
+            </div>
+          </div>
+        </div>
       </div>
+
     </section>
   );
 }
